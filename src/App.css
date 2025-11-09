@@ -115,7 +115,6 @@
   max-width: 400px;
   aspect-ratio: 9/16;
   background: #000;
-  border-radius: 12px;
   overflow: hidden;
   position: relative;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
@@ -243,8 +242,10 @@
 }
 
 .status-media {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   display: block;
 }
@@ -268,6 +269,8 @@
 .status-text a {
   color: white;
   text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-skip-ink: none;
 }
 
 /* Views Section */
@@ -276,21 +279,34 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   background: rgba(0, 0, 0, 0.5);
   flex-shrink: 0;
+  margin-bottom: 0;
 }
 
 .custom-eye-icon {
   background: black;
   border-radius: 50%;
-  padding: 2px;
+  padding: 3px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.custom-eye-icon svg {
+  width: 20px;
+  height: 20px;
 }
 
 .view-count {
   color: white;
   font-size: 0.95rem;
   font-weight: 500;
+  flex-shrink: 0;
 }
 
 /* Responsive */

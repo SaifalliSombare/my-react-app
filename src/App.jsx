@@ -6,12 +6,11 @@ import './App.css'
 // Custom Eye Icon Component
 const CustomEyeIcon = () => (
   <svg 
-    width="24" 
-    height="24" 
+    width="20" 
+    height="20" 
     viewBox="0 0 24 24" 
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"
-    className="custom-eye-icon"
   >
     <path 
       d="M12 5C7 5 2.73 8.11 1 12.5C2.73 16.89 7 20 12 20C17 20 21.27 16.89 23 12.5C21.27 8.11 17 5 12 5Z" 
@@ -116,20 +115,17 @@ function App() {
     
     try {
       const element = screenshotRef.current
+      
       const canvas = await html2canvas(element, {
         backgroundColor: '#000',
         scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: false,
-        width: element.scrollWidth,
-        height: element.scrollHeight,
         x: 0,
         y: 0,
         scrollX: 0,
-        scrollY: 0,
-        foreignObjectRendering: false,
-        imageTimeout: 0
+        scrollY: 0
       })
       
       const link = document.createElement('a')
@@ -278,7 +274,9 @@ function App() {
           {/* Views Section */}
           {views && (
             <div className="views-section">
-              <CustomEyeIcon />
+              <div className="custom-eye-icon">
+                <CustomEyeIcon />
+              </div>
               <span className="view-count">{views}</span>
             </div>
           )}
