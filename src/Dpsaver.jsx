@@ -1,0 +1,118 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './App.css';
+
+
+const DPSaver = () => {
+	const navigate = useNavigate();
+	const [images, setImages] = useState([]); // for new uploads
+	const [previews, setPreviews] = useState([]); // for new uploads
+	const [savedImages, setSavedImages] = useState([]); // for localStorage
+
+	// Load previews from selected files
+	const handleImageChange = (e) => {
+		const files = Array.from(e.target.files);
+		setImages(files);
+		const fileReaders = files.map(file => {
+			return new Promise((resolve) => {
+				const reader = new FileReader();
+				reader.onload = (ev) => resolve(ev.target.result);
+				reader.readAsDataURL(file);
+			});
+		});
+		Promise.all(fileReaders).then(setPreviews);
+	};
+
+	// Save images to localStorage with 0,1,2... keys (append to existing)
+	const handleSave = () => {
+		const current = getAllFromLocalStorage();
+		const all = [...current, ...previews];
+		saveAllToLocalStorage(all);
+		setSavedImages(all);
+		setImages([]);
+		setPreviews([]);
+	};
+
+	// Get all images from localStorage in order
+	const getAllFromLocalStorage = () => {
+		const arr = [];
+		let i = 0;
+		while (true) {
+			const item = localStorage.getItem(`dpsaver_${i}`);
+			if (!item) break;
+			arr.push(item);
+			i++;
+		}
+		return arr;
+	};
+
+	// Save all images to localStorage with correct keys
+	const saveAllToLocalStorage = (arr) => {
+		// Clear old
+		let i = 0;
+		while (localStorage.getItem(`dpsaver_${i}`)) {
+			localStorage.removeItem(`dpsaver_${i}`);
+			i++;
+		}
+		// Set new
+		arr.forEach((img, idx) => {
+			localStorage.setItem(`dpsaver_${idx}`, img);
+		});
+	};
+
+	// Delete image at index and re-sequence
+	const handleDelete = (idx) => {
+		const all = getAllFromLocalStorage();
+		all.splice(idx, 1);
+		saveAllToLocalStorage(all);
+		setSavedImages(all);
+	};
+
+	// Load saved images on mount
+	useEffect(() => {
+		setSavedImages(getAllFromLocalStorage());
+	}, []);
+
+	return (
+		<div className="upload-section">
+			<button className="generate-btn" style={{ marginBottom: 16 }} onClick={() => navigate('/')}>Go Back</button>
+			<h1>DP Saver</h1>
+			<div className="upload-controls">
+				<div className="upload-group">
+					<label>Upload Multiple Images:</label>
+					<input type="file" accept="image/*" multiple onChange={handleImageChange} />
+				</div>
+				{previews.length > 0 && (
+					<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', margin: '1rem 0' }}>
+						{previews.map((src, i) => (
+							<img key={i} src={src} alt={`preview-${i}`} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid #ccc' }} />
+						))}
+					</div>
+				)}
+				<button className="generate-btn" onClick={handleSave} disabled={previews.length === 0}>
+					Add to List
+				</button>
+			</div>
+
+			{/* List of saved images with delete option */}
+			<div style={{ marginTop: '2rem' }}>
+				<h2>Saved Images</h2>
+				{savedImages.length === 0 ? (
+					<div style={{ color: '#888' }}>No images saved yet.</div>
+				) : (
+					<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+						{savedImages.map((src, i) => (
+							<div key={i} style={{ position: 'relative', display: 'inline-block' }}>
+								<img src={src} alt={`saved-${i}`} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid #ccc' }} />
+								<button onClick={() => handleDelete(i)} style={{ position: 'absolute', top: 2, right: 2, background: '#ff4d4f', color: 'white', border: 'none', borderRadius: '50%', width: 22, height: 22, cursor: 'pointer', fontWeight: 700, fontSize: 14, lineHeight: '22px', padding: 0 }}>×</button>
+								<div style={{ position: 'absolute', bottom: 2, left: 2, background: '#222', color: '#fff', borderRadius: 4, fontSize: 12, padding: '0 4px', opacity: 0.7 }}>{i}</div>
+							</div>
+						))}
+					</div>
+				)}
+			</div>
+		</div>
+	);
+};
+
+export default DPSaver;
