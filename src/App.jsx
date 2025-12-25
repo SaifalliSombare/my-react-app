@@ -30,8 +30,7 @@ const CustomEyeIcon = () => (
   </svg>
 )
 function App() {
-
-  const navigate = (window.location && window.location.pathname && window.location.pathname.includes('dpsaver')) ? null : (path) => { window.location.href = path; };
+  const navigate = useNavigate();
   const [statusImage, setStatusImage] = useState(null)
   const [statusVideo, setStatusVideo] = useState(null)
   const [profilePic, setProfilePic] = useState(null)
@@ -217,11 +216,9 @@ function App() {
 
         <h1>WhatsApp Status Screenshot Generator
           
-      {navigate && (
-        <button className="dpsaver-btn"  onClick={() => navigate('/dpsaver')}>
-          Go to DP Saver
-        </button>
-      )}
+      <button className="dpsaver-btn"  onClick={() => navigate('/dpsaver')}>
+        Go to DP Saver
+      </button>
         </h1>
 
 
