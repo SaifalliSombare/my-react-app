@@ -1,3 +1,21 @@
+/* Fullscreen loader overlay for DP Saver */
+.fullscreen-loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.35);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loader-spinner-large {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+}
 /* DP Saver Button */
 .dpsaver-btn {
   background: #25d366;

@@ -8,6 +8,7 @@ const DPSaver = () => {
 	const [images, setImages] = useState([]); // for new uploads
 	const [previews, setPreviews] = useState([]); // for new uploads
 	const [savedImages, setSavedImages] = useState([]); // for localStorage
+	const [loading, setLoading] = useState(false); // loader for add to list
 
 	// Load previews from selected files
 	const handleImageChange = (e) => {
@@ -24,13 +25,18 @@ const DPSaver = () => {
 	};
 
 	// Save images to localStorage with 0,1,2... keys (append to existing)
-	const handleSave = () => {
+	const handleSave = async () => {
+		setLoading(true);
 		const current = getAllFromLocalStorage();
 		const all = [...current, ...previews];
 		saveAllToLocalStorage(all);
 		setSavedImages(all);
 		setImages([]);
 		setPreviews([]);
+        setTimeout(() => {
+        setLoading(false);
+        history.back();
+        }, 4000);
 	};
 
 	// Get all images from localStorage in order
@@ -74,7 +80,21 @@ const DPSaver = () => {
 	}, []);
 
 	return (
-		<div className="upload-section">
+		
+<>
+			{loading && (
+				<div className="fullscreen-loader-overlay">
+					<span className="loader-spinner-large">
+						<svg width="60" height="60" viewBox="0 0 50 50">
+							<circle cx="25" cy="25" r="20" fill="none" stroke="#25d366" strokeWidth="6" strokeDasharray="31.4 31.4" strokeLinecap="round">
+								<animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.8s" repeatCount="indefinite" />
+							</circle>
+						</svg>
+					</span>
+				</div>
+			)}
+            
+			<div className="upload-section">
 			<button className="generate-btn" style={{ marginBottom: 16 }} onClick={() => navigate('/')}>Go Back</button>
 			<h1>DP Saver</h1>
 			<div className="upload-controls">
@@ -112,6 +132,7 @@ const DPSaver = () => {
 				)}
 			</div>
 		</div>
+        </>
 	);
 };
 

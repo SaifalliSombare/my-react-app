@@ -211,7 +211,7 @@ function App() {
       {/* DP Saver Navigation Button */}
       <div className="upload-section">
         <div style={{color:'#ff5100ff', background:'rgba(30,32,38,0.18)', borderRadius:8, padding:'8px 14px', marginBottom:16, fontWeight:500, fontSize:'1rem', textAlign:'center'}}>
-          <span role="img" aria-label="info">ℹ️</span> For best results, use <b>Google Chrome</b> browser.
+          <span role="img" aria-label="info">Note: </span> For best results, use <b>Google Chrome</b> browser.
         </div>
 
         <h1>WhatsApp Status Screenshot Generator
