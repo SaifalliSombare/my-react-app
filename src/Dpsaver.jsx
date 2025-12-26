@@ -11,7 +11,43 @@ const DPSaver = () => {
 	const [loading, setLoading] = useState(false); // loader for add to list
 
 	// Load previews from selected files
-	const handleImageChange = (e) => {
+
+	// Compress image to ~200KB using canvas
+	const compressImage = (src, mimeType = 'image/jpeg', targetSize = 200 * 1024) => {
+		return new Promise((resolve) => {
+			const img = new window.Image();
+			img.onload = () => {
+				const canvas = document.createElement('canvas');
+				// Resize to max 400x400 for DP
+				const maxDim = 400;
+				let w = img.width, h = img.height;
+				if (w > maxDim || h > maxDim) {
+					if (w > h) {
+						h = Math.round(h * (maxDim / w));
+						w = maxDim;
+					} else {
+						w = Math.round(w * (maxDim / h));
+						h = maxDim;
+					}
+				}
+				canvas.width = w;
+				canvas.height = h;
+				const ctx = canvas.getContext('2d');
+				ctx.drawImage(img, 0, 0, w, h);
+				let quality = 0.92;
+				let dataUrl = canvas.toDataURL(mimeType, quality);
+				// Reduce quality until under targetSize or minimum quality
+				while (dataUrl.length > targetSize * 1.33 && quality > 0.5) {
+					quality -= 0.07;
+					dataUrl = canvas.toDataURL(mimeType, quality);
+				}
+				resolve(dataUrl);
+			};
+			img.src = src;
+		});
+	};
+
+	const handleImageChange = async (e) => {
 		const files = Array.from(e.target.files);
 		setImages(files);
 		const fileReaders = files.map(file => {
@@ -21,7 +57,12 @@ const DPSaver = () => {
 				reader.readAsDataURL(file);
 			});
 		});
-		Promise.all(fileReaders).then(setPreviews);
+		const rawPreviews = await Promise.all(fileReaders);
+		// Compress each preview
+		const compressedPreviews = await Promise.all(
+			rawPreviews.map(src => compressImage(src))
+		);
+		setPreviews(compressedPreviews);
 	};
 
 	// Save images to localStorage with 0,1,2... keys (append to existing)
